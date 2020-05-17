@@ -1,28 +1,19 @@
-const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
+const express = require('express');
+const mailRouts = require('./routes/mailRout');
 
+const bodyParser = require('body-parser');
+
+const app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.raw());
 dotenv.config({ path: './config/config.env' });
 
-let transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.GMAIL, // generated ethereal user
-    pass: process.env.PASSWORD, // generated ethereal password
-  },
-});
+const PORT = 3000;
 
-let info = {
-  from: 'pratikfolio@gmail.com', // sender address
-  to: 'meetpratiik@gmail.com', // list of receivers
-  subject: 'testing the nodemailer', // Subject line
-  text: 'Hello world', // plain text body
-  html: '<b>Hello world?</b>', // html body
-};
+app.use('/api/v1/contactus', mailRouts);
 
-transporter.sendMail(info, (err, data) => {
-  if (err) {
-    console.log('cant send mail');
-  } else {
-    console.log('Emai send');
-  }
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
